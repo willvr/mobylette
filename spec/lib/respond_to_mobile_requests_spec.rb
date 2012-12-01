@@ -113,6 +113,24 @@ module Mobylette
       end
     end
 
+    describe "#stop_processing_because_format?" do
+      before(:each) do
+          request = double("request", format: :json)
+          subject.stub(:request).and_return(request)
+      end
+
+      it "should return false with no options" do
+        subject.send(:stop_processing_because_format?).should be_false
+      end
+
+      it "should be true when optional formats included and unmatching format it requested" do
+        subject.mobylette_options[:overridable_formats] = [:html]
+        subject.send(:stop_processing_because_format?).should be_true
+        subject.mobylette_options[:overridable_formats] = nil
+      end
+
+    end
+
     describe "#force_mobile_by_session?" do
       it "should be true if the force_mobile is enabled in the session" do
         subject.stub(:session).and_return({mobylette_override: :force_mobile})

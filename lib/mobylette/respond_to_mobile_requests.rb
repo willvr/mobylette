@@ -153,7 +153,7 @@ module Mobylette
     #          or not
     #
     def respond_as_mobile?
-      impediments = stop_processing_because_xhr? || stop_processing_because_param?
+      impediments = stop_processing_because_xhr? || stop_processing_because_param? || stop_processing_because_format?
       (not impediments) && (force_mobile_by_session? || is_mobile_request? || params[:format] == 'mobile')
     end
 
@@ -192,6 +192,12 @@ module Mobylette
       else
         false
       end
+    end
+
+    # Private: If overridable_formats are specified, stop processing all other formats
+    #
+    def stop_processing_because_format?
+      self.mobylette_options[:overridable_formats] && not(self.mobylette_options[:overridable_formats].include?(request.format.to_sym))
     end
 
     # Private: Process the request as mobile
